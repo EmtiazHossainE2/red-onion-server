@@ -12,7 +12,7 @@ require('dotenv').config() // npm dotenv
 
 //4 
 app.use(cors())
-// app.use(express.json()) 
+app.use(express.json()) 
 
 //5 
 
@@ -33,6 +33,19 @@ async function run() {
             const services = await cursor.toArray()
             res.send(services)
         })
+
+        //9 find one 
+
+        //10 add item (insert one item) [post means add data ]
+        app.post('/service' , async(req,res) => {
+            const service = req.body 
+            const result = await serviceCollection.insertOne(service)
+            res.send(result)
+        })
+
+        //11 delete 
+
+        //12 update 
 
         
     } finally {
