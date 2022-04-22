@@ -8,7 +8,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 
 //3 
 const cors = require('cors');
-require('dotenv').config() 
+require('dotenv').config() // npm dotenv 
 
 //4 
 app.use(cors())
@@ -16,24 +16,36 @@ app.use(cors())
 
 //5 
 
-const uri = "mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ntqc6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ntqc6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
 
+//6
+async function run() {
+    try {
+        //7
+        await client.connect();
+        const serviceCollection = client.db("redOnion").collection("service");
 
+        // 8 find multiple [get means load data ]
+        app.get('/service' , async(req,res) => {
+            const query = {} ; 
+            const cursor = serviceCollection.find(query) 
+            const services = await cursor.toArray()
+            res.send(services)
+        })
 
-
-
+        
+    } finally {
+        //await client.close();
+    }
+}
+run().catch(console.dir);
 
 //2 
-app.get('/' , (req,res) => {
+app.get('/', (req, res) => {
     res.send('Red onion Server Running')
 })
 
-app.listen(port , () => {
-    console.log('Red onion Running' , port);
+app.listen(port, () => {
+    console.log('Red onion Running', port);
 })
